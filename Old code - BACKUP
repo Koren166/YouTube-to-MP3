@@ -1,0 +1,72 @@
+from pytube import YouTube
+import os
+
+print("Welcome to YouTube to mp3 downloader!\n"
+      "* * * * * * * * * * * * * *\n")
+method = int(1)
+while method != 0:
+    method = int(input("Choose the method of input:\n"
+                       "[0] - Exit\n"
+                       "[1] - Manually input URL and file name\n"
+                       "[2] - Automatic extraction from file\n"))
+
+    # exit
+    if method == 0:
+        exit()
+
+    # manual url input
+    elif method == 1:
+        optn = int(1)
+        while optn != 0:
+            optn = int(input("Enter the following:\n"
+                             "[1] - Add new URL and title\n"
+                             "[0] - Exit\n"))
+
+            # exit
+            if optn == 0:
+                exit()
+
+            # enter new url & title
+            elif optn == 1:
+                title = str(input("Enter the title >>> "))
+                yt = YouTube(input("Enter the URL >>> "))
+                video = yt.streams.get_audio_only()
+                out_file = video.download(output_path='C:/Users/koren/Music/', filename=title)  # if path doesn't work - try 'Music/'
+                base, ext = os.path.splitext(out_file)
+                new_file = base + '.mp3'
+                os.rename(out_file, new_file)
+                print("Downloaded " + title)
+
+            # wrong input
+            else:
+                print("Incorrect input!\n")
+
+    # automatic file-based input
+    elif method == 2:
+        f = open('D:/Coding - Python/Projects/YoutubeDownloader/URLs.txt', 'r')
+        i = int(-1)
+        lines = []
+        for line in f:
+            i += 1
+            lines.append(line)
+
+            # is title
+            if (i % 2) == 0:
+                continue
+
+            # is url
+            elif (i % 2) == 1:
+                title = lines[i - 1]
+                yt = YouTube(line)
+                video = yt.streams.filter(only_audio=True).first()
+                out_file = video.download(output_path='C:/Users/koren/Music/', filename=title)
+                base, ext = os.path.splitext(out_file)
+                new_file = base + '.mp3'
+                os.rename(out_file, new_file)
+                print("Downloaded " + title)
+        f.close()
+        exit()
+
+    #  wrong input
+    else:
+        print("Wrong input!\n")
